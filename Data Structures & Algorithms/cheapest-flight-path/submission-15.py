@@ -1,0 +1,21 @@
+class Solution:
+    def findCheapestPrice(self, n: int, flights: List[List[int]], src: int, dst: int, k: int) -> int:
+        
+        # dijkstra
+        graph = defaultdict(list)
+        for start, end, price in flights:
+            graph[start].append((price, end))
+        res = 0
+        seen = {}
+        minHeap = [(0, src, 0)]
+        while minHeap:
+            price, curr, flightTime = heapq.heappop(minHeap)
+
+            if curr == dst and flightTime-1 <= k:
+                return price
+            
+            if curr not in seen or seen[curr] > flightTime:
+                seen[curr] = flightTime
+                for neiPrice, nei in graph[curr]:
+                    heapq.heappush(minHeap, (price+neiPrice, nei, flightTime+1))
+        return -1
